@@ -1,0 +1,9 @@
+server:
+  port: 8082
+  error:
+    include-message: always
+    include-stacktrace: never
+
+#logging:
+#  level:
+#    root: DEBUG
