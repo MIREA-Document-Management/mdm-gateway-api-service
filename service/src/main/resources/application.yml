@@ -7,3 +7,54 @@ server:
 #logging:
 #  level:
 #    root: DEBUG
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    reactor.netty.http.client: TRACE
+
+spring:
+#  main:
+#    allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      client:
+        registration:
+          backend:
+            authorizationGrantType: client_credentials
+            clientId: mdm_client
+            clientSecret: oETh9BqhjoJAfld2jFGk2acsjtTcve4E
+        provider:
+          backend:
+            tokenUri: http://localhost:8080/realms/MDM/protocol/openid-connect/token
+  cloud:
+    gateway:
+      routes:
+        - id: mdm-documents-service
+          uri: http://localhost:8091
+          predicates:
+            - Path=/mdm-documents-service/**
+          filters:
+            - StripPrefix=1
+        - id: mdm-files-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/mdm-files-service/**
+          filters:
+            - StripPrefix=1
+        - id: keycloak
+          uri: http://localhost:8080
+          predicates:
+            - Path=/keycloak/**
+          filters:
+            - StripPrefix=1
+
+mdm:
+  registry:
+    service:
+      url: http://localhost:8888
+  keycloak:
+    url: http://localhost:8080
+    token-uri: ${mdm.keycloak.url}/realms/MDM/protocol/openid-connect/token
+    jwk-set-uri: ${mdm.keycloak.url}/realms/MDM/protocol/openid-connect/certs
+    client-secret: OyIAASoDGnbuDrwzVGdyhqsFiq0VLPBY
